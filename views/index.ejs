@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Better Productivity Dashboard</title>
+
+  <link rel="icon" type="image/x-icon" href="img/otter-solid.svg">
+
+  <!-- Bootstrap core CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+
+  <!-- Custom styles for this template -->
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Welcome to your dashboard.</h1>
+        <p>This is your dashboard. Do whatever you want with it.</p>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3 mb-3 hand-pointer">
+          <form action="/add" method="post">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Ticket URL" name="ticket">
+              <button type="submit" class="btn btn-secondary float-right">Add</button>
+            </div>
+          </form>
+
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3" style="color: #333">
+            <span class="badge" style="background-color: #ffdeb4; color: #333"><%= context.coreCount + context.specialtyCount %> Tickets</span>
+            <span class="badge" style="background-color: #ffb4b4; color: #333"><%= context.coreCount %> Core Tickets</span>
+            <span class="badge" style="background-color: #b2a4ff; color: #333"><%= context.specialtyCount %> Specialty Tickets</span>
+          </div>
+
+
+          <!-- This is the right menu -->
+
+          <div class="col-md-6 d-flex justify-content-end" id="menu">
+            <!-- Date picker -->
+            <ul>
+              <li>
+                <i class="fa-solid fa-list-check" data-bs-toggle="modal" data-bs-target="#targetsModal"></i>
+              </li>
+              <li>
+                <div class="input-group mb-3">
+                  <a href="#" id="openDatepickerBtn" style="position: relative;">
+                    <i class="fa-regular fa-calendar-days" id="openDatepickerBtn"></i>
+                  </a>
+                </div>
+              </li>
+              <li>
+                <i class="fa-solid fa-gears" data-bs-toggle="modal" data-bs-target="#settingsModal"></i>
+              </li>
+            </div>
+          </div>
+
+
+          <!-- Add a progress bar -->
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <div class="progress">
+
+                <% if (context.coreCount > context.coreTicketsTarget) { %>
+                <% context.coreCount = context.coreTicketsTarget; %>
+                <% } %>
+
+                <% if (context.specialtyCount > context.specialtyTicketsTarget) { %>
+                <% context.specialtyCount = context.specialtyTicketsTarget; %>
+                <% } %>
+
+
+
+                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: <%= context.coreCount / context.totalticketsTarget * 100 %>%; background-color: #ffb4b4"></div>
+                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: <%= context.specialtyCount / context.totalticketsTarget * 100 %>%; background-color: #b2a4ff"></div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- Add a table with the tickets -->
+          <div class="row mb-2">
+            <div class="col-md-12">
+
+              <% if(context.dataTickets.length > 0) { %>
+
+              <!-- Display Tickets and hide column according to config -->
+
+              <table class="table" id="ticketsTable">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+
+                    <th scope="col">Description</th>
+
+                    <% if(context.config.columnsToShow.specialty == "on") { %>
+                    <th class="text-end" scope="col">Specialty</th>
+                    <% } %>
+
+                    <% if(context.config.columnsToShow.user == "on") { %>
+                    <th scope="col">User</th>
+                    <% } %>
+
+                    <% if(context.config.columnsToShow.brand == "on") { %>
+                    <th scope="col">Brand</th>
+                    <% } %>
+
+                    <% if(context.config.columnsToShow.creationDate == "on") { %>
+                    <th scope="col">Creation</th>
+                    <% } %>
+
+                    <% if(context.config.columnsToShow.date == "on") { %>
+                    <th scope="col">Time</th>
+                    <% } %>
+
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  <% context.dataTickets.forEach((ticket, index) => { %>
+                  <tr class="ticket  ticket-color-<%= ticket.color %>" id="ticket-<%= ticket.id %>">
+                    <th scope="row"><%= index + 1 %></th>
+
+                    <td><a target="_blank" href="https://odo.corp.qualtrics.com/?a=Tickets&b=TicketViewer&tid=<%= ticket.ticketId %>"><%= ticket.name.replace(/\s-\s[\w.-]+@[\w.-]+\.\w+/g, "") %></a></td>
+
+                    <% if(context.config.columnsToShow.specialty == "on") { %>
+                    <td class="text-end"><%= context.specialties[ticket.specialty] %></td>
+                    <% } %>
+
+                    <% if(context.config.columnsToShow.user == "on") { %>
+                    <td><%= ticket.user %></td>
+                    <% } %>
+
+                    <% if(context.config.columnsToShow.brand == "on") { %>
+                    <td><%= ticket.brand %></td>
+                    <% } %>
+
+                    <% if(context.config.columnsToShow.creationDate == "on") { %>
+                    <td><%= ticket.creationDate.substring(0,10) %></td>
+                    <% } %>
+
+                    <% if(context.config.columnsToShow.date == "on") { %>
+                    <td><%= ticket.date.slice(11, 16) %></td>
+                    <% } %>
+
+                    <td>
+                      <div class="dropdown">
+                        <i class="bi bi-three-dots-vertical hand-pointer" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                          <li><a class="dropdown-item ticket-start-default" data-ticket-id=<%= ticket.id %> href="#">Default</a></li>
+                          <li><a class="dropdown-item ticket-start-warning" data-ticket-id=<%= ticket.id %> href="#">Warning</a></li>
+                          <li><a class="dropdown-item ticket-start-success" data-ticket-id=<%= ticket.id %> href="#">Success</a></li>
+                          <li><a class="dropdown-item ticket-start-alert" data-ticket-id=<%= ticket.id %>   href="#">Alert</a></li>
+
+                        </ul>
+                      </div>
+                    </td>
+                    
+                  </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+
+              <% } else {%>
+              <div class="text-center">
+                <p><i class="fa-solid fa-otter fa-bounce fa-2xl" style="color: #4c4848;"></i></p>
+                <p>No ticket yet, but you're going to do well!</p>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  <!-- Button trigger modal
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Launch demo modal
+  </button>
+
+-->
+
+<!-- Add Modal for Targets -->
+<div class="modal fade" id="targetsModal" tabindex="-1" aria-labelledby="targetsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="targetsModalLabel">What are your goals for today?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/your-post-url" method="post"> <!-- Replace "/your-post-url" with the actual URL for the POST request -->
+        <div class="modal-body">
+          <!-- Add the input fields for core and specialty targets -->
+          <div class="mb-3">
+            <label for="coreTarget" class="form-label">Core Target</label>
+            <input type="number" class="form-control" id="coreTarget" name="coreTarget" placeholder="Enter Core Target" required>
+          </div>
+          <div class="mb-3">
+            <label for="specialtyTarget" class="form-label">Specialty Target</label>
+            <input type="number" class="form-control" id="specialtyTarget" name="specialtyTarget" placeholder="Enter Specialty Target" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <!-- Use a submit button to send the form data as a POST request -->
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add Modal for Settings -->
+<div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/editsettings" method="post"> 
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+              <p>Which columns do you want to display?</p>
+            </div>
+          </div>
+
+          <!-- First row of checkboxes -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="columnsToShow[date]" <% if(context.config.columnsToShow.date == "on") { %> checked <% } %>>
+                <label class="form-check-label" for="checkbox1">
+                  Time
+                </label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="columnsToShow[specialty]" <% if(context.config.columnsToShow.specialty == "on") { %> checked <% } %>>
+                <label class="form-check-label" for="checkbox2">
+                 Specialty
+               </label>
+             </div>
+           </div>
+         </div>
+
+         <!-- Second row of checkboxes -->
+         <div class="row mt-3">
+          <div class="col-md-6">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="columnsToShow[user]" <% if(context.config.columnsToShow.user == "on") { %> checked <% } %>>
+              <label class="form-check-label" for="checkbox3">
+                User
+              </label>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="columnsToShow[brand]" <% if(context.config.columnsToShow.brand == "on") { %> checked <% } %>>
+              <label class="form-check-label" for="checkbox4">
+                Brand
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Third row of checkboxes -->
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="columnsToShow[creationDate]" <% if(context.config.columnsToShow.creationDate == "on") { %> checked <% } %>>
+              <label class="form-check-label" for="checkbox5">
+               Creation Date
+             </label>
+           </div>
+         </div>
+       </div>
+     </div>
+     <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <!-- Use a submit button to send the form data as a POST request -->
+      <button type="submit" class="btn btn-primary">Save changes</button>
+    </div>
+  </form>
+</div>
+</div>
+</div>
+
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/css/bootstrap-datepicker.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
+<!-- Include DataTables library -->
+<link href="https://cdn.datatables.net/v/bs5/dt-1.13.5/datatables.min.css" rel="stylesheet">
+
+<script src="https://cdn.datatables.net/v/bs5/dt-1.13.5/datatables.min.js"></script>
+
+<!-- Icons -->
+
+<script src="https://kit.fontawesome.com/91810ca935.js" crossorigin="anonymous"></script>
+
+<!-- Date Picker Script -->
+
+<script>
+  $(document).ready(function() {
+      // Initialize the Datepicker
+    $("#openDatepickerBtn").datepicker({
+        format: "yyyy-mm-dd", // Change the format as needed
+        autoclose: true,
+        todayHighlight: true,
+        orientation: "bottom" // Set the orientation to 'bottom'
+      });
+
+      // Date selection event
+    $("#openDatepickerBtn").on("changeDate", function(e) {
+        // Get the selected date
+      const selectedDate = e.format();
+
+        // Redirect to the new URL with the date as a query parameter
+      window.location.href = "/?date=" + selectedDate;
+    });
+  });
+</script>
+
+<!--
+<script>
+  $(document).ready(function() {
+    $('#ticketsTable').DataTable({
+        // Remove search bar
+      searching: false,
+        // Remove pagination
+      paging: false,
+        // Remove "Showing 1 to 9 of 9 entries" text
+      info: false,
+        // Allow sorting only for columns 1, 4, and 7
+      columnDefs: [
+      {
+        targets: [0, 2],
+        orderable: true
+      },
+      {
+        targets: '_all',
+        orderable: false
+      }
+      ]
+    });
+  });
+</script>
+
+-->
+
+<!-- Use Ajax to change ticket's color without reloading page to Warning -->
+
+<script>
+  $(document).ready(function() {
+    // Handle the click event on the ticket divs
+    $('.ticket-start-default').on('click', function() {
+      const ticketId = $(this).data('ticket-id');
+
+      // Apply the new color through the class
+
+      $('#ticket-' + ticketId).removeClass();
+
+        // Send an Ajax request to update the ticket color
+      $.ajax({
+            url: '/updatecolor/' +  ticketId + '/default' , // Replace with your server endpoint
+            method: 'POST', // or 'GET' depending on your server-side setup
+            data: {
+              ticketId: ticketId,
+                newColor: '#f00', // Replace with the color you want to set
+              },
+              success: function(response) {
+                // If the server successfully updates the color, apply the new color to the ticket
+                $(this).addClass('clicked');
+              },
+              error: function(xhr, status, error) {
+                console.error('Error updating ticket color:', error);
+              }
+            });
+    });
+  });
+</script>
+
+<script>
+  $(document).ready(function() {
+    // Handle the click event on the ticket divs
+    $('.ticket-start-warning').on('click', function() {
+      const ticketId = $(this).data('ticket-id');
+
+      // Apply the new color through the class
+
+      $('#ticket-' + ticketId).removeClass().addClass('ticket-color-warning');
+
+        // Send an Ajax request to update the ticket color
+      $.ajax({
+            url: '/updatecolor/' +  ticketId + '/warning' , // Replace with your server endpoint
+            method: 'POST', // or 'GET' depending on your server-side setup
+            data: {
+              ticketId: ticketId,
+                newColor: '#f00', // Replace with the color you want to set
+              },
+              success: function(response) {
+                // If the server successfully updates the color, apply the new color to the ticket
+                $(this).addClass('clicked');
+              },
+              error: function(xhr, status, error) {
+                console.error('Error updating ticket color:', error);
+              }
+            });
+    });
+  });
+</script>
+
+<script>
+  $(document).ready(function() {
+    // Handle the click event on the ticket divs
+    $('.ticket-start-success').on('click', function() {
+      const ticketId = $(this).data('ticket-id');
+
+      // Apply the new color through the class
+
+      $('#ticket-' + ticketId).removeClass().addClass('ticket-color-success');
+
+        // Send an Ajax request to update the ticket color
+      $.ajax({
+            url: '/updatecolor/' +  ticketId + '/success' , // Replace with your server endpoint
+            method: 'POST', // or 'GET' depending on your server-side setup
+            data: {
+              ticketId: ticketId,
+                newColor: '#f00', // Replace with the color you want to set
+              },
+              success: function(response) {
+                // If the server successfully updates the color, apply the new color to the ticket
+                $(this).addClass('clicked');
+              },
+              error: function(xhr, status, error) {
+                console.error('Error updating ticket color:', error);
+              }
+            });
+    });
+  });
+</script>
+
+<script>
+  $(document).ready(function() {
+    // Handle the click event on the ticket divs
+    $('.ticket-start-alert').on('click', function() {
+      const ticketId = $(this).data('ticket-id');
+
+      // Apply the new color through the class
+
+      $('#ticket-' + ticketId).removeClass().addClass('ticket-color-alert');
+
+        // Send an Ajax request to update the ticket color
+      $.ajax({
+            url: '/updatecolor/' +  ticketId + '/alert' , // Replace with your server endpoint
+            method: 'POST', // or 'GET' depending on your server-side setup
+            data: {
+              ticketId: ticketId,
+                newColor: '#f00', // Replace with the color you want to set
+              },
+              success: function(response) {
+                // If the server successfully updates the color, apply the new color to the ticket
+                $(this).addClass('clicked');
+              },
+              error: function(xhr, status, error) {
+                console.error('Error updating ticket color:', error);
+              }
+            });
+    });
+  });
+</script>
+
+
+<!-- Script to clean Ticket's name -->
+
+
+</body>
+</html>

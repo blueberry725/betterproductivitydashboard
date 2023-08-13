@@ -1,0 +1,49 @@
+<table id="ticketTable" class="table">
+  <tr>
+    <td>Name: John</td>
+    <td>Age: 30</td>
+  </tr>
+  <tr>
+    <td>Name: Alice</td>
+    <td>Age: 25</td>
+  </tr>
+  <tr>
+    <td>Name: Bob</td>
+    <td>Age: 35</td>
+  </tr>
+</table>
+
+<button id="sortByNameButton" class="btn btn-primary" data-column-index="0">Sort by Name</button>
+<button id="sortByAgeButton" class="btn btn-primary" data-column-index="1">Sort by Age</button>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    // Function to sort the table rows based on the specified column index
+    function sortTableRows(columnIndex) {
+      var tbody = $('#ticketTable tbody');
+      var rows = tbody.find('tr').get();
+      rows.sort(function(a, b) {
+        var textA = $(a).find('td').eq(columnIndex).text().toUpperCase();
+        var textB = $(b).find('td').eq(columnIndex).text().toUpperCase();
+        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      });
+      $.each(rows, function(index, row) {
+        tbody.append(row);
+      });
+    }
+
+    // Event handler for sorting by name
+    $('#sortByNameButton').on('click', function() {
+      var columnIndex = parseInt($(this).data('column-index'));
+      sortTableRows(columnIndex);
+    });
+
+    // Event handler for sorting by age
+    $('#sortByAgeButton').on('click', function() {
+      var columnIndex = parseInt($(this).data('column-index'));
+      sortTableRows(columnIndex);
+    });
+  });
+</script>

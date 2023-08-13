@@ -1,0 +1,51 @@
+ /* To remove the default arrow (caret), use the following: */
+ .dropdown-toggle::after {
+  display: none;
+}
+
+a {
+  text-decoration: none; /* Remove underline */
+  color: inherit; /* Inherit text color from parent element */
+}
+
+a:hover {
+  text-decoration: none; /* Remove underline */
+  color: inherit; /* Inherit text color from parent element */
+}
+
+.datepicker {
+  margin-top: 25px;
+}
+
+#menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+}
+
+/* Optionally add some spacing between the list items */
+#menu li {
+  margin-right: 20px;
+  cursor: pointer;
+}
+
+body {
+  color: #333;
+}
+
+.hand-pointer {
+  cursor: pointer;
+}
+
+.ticket-color-warning {
+  background-color: #cfbaf0;
+}
+
+.ticket-color-success {
+  background-color: #a3c4f3;
+}
+
+.ticket-color-alert {
+  background-color: #90dbf4;
+}
