@@ -2,6 +2,8 @@
   "columnsToShow": {
     "date": "on",
     "specialty": "on",
-    "brand": "on"
+    "user": "on",
+    "brand": "on",
+    "creationDate": "on"
   }
 }

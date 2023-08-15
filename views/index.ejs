@@ -66,25 +66,28 @@
 
 
           <!-- Add a progress bar -->
+          <% if (context.ticketsTarget) { %>
           <div class="row">
             <div class="col-md-12 mb-3">
               <div class="progress">
+                
 
-                <% if (context.coreCount > context.coreTicketsTarget) { %>
-                <% context.coreCount = context.coreTicketsTarget; %>
+                <% if (context.coreCount > context.ticketsTarget.totalTarget - context.ticketsTarget.specialtyTarget) { %>
+                <% context.coreCount = context.ticketsTarget.totalTarget - context.ticketsTarget.specialtyTarget; %>
                 <% } %>
 
-                <% if (context.specialtyCount > context.specialtyTicketsTarget) { %>
-                <% context.specialtyCount = context.specialtyTicketsTarget; %>
+                <% if (context.specialtyCount > context.ticketsTarget.specialtyTarget) { %>
+                <% context.specialtyCount = context.ticketsTarget.specialtyTarget; %>
                 <% } %>
 
 
 
-                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: <%= context.coreCount / context.totalticketsTarget * 100 %>%; background-color: #ffb4b4"></div>
-                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: <%= context.specialtyCount / context.totalticketsTarget * 100 %>%; background-color: #b2a4ff"></div>
+                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: <%= context.coreCount / context.ticketsTarget.totalTarget * 100 %>%; background-color: #ffb4b4"></div>
+                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: <%= context.specialtyCount / context.ticketsTarget.totalTarget * 100 %>%; background-color: #b2a4ff"></div>
               </div>
             </div>
           </div>
+          <% } %>
 
 
           <!-- Add a table with the tickets -->
@@ -102,23 +105,23 @@
 
                     <th scope="col">Description</th>
 
-                    <% if(context.config.columnsToShow.specialty == "on") { %>
+                    <% if(context.settings.specialtyColumn == true) { %>
                     <th class="text-end" scope="col">Specialty</th>
                     <% } %>
 
-                    <% if(context.config.columnsToShow.user == "on") { %>
+                    <% if(context.settings.userColumn == true) { %>
                     <th scope="col">User</th>
                     <% } %>
 
-                    <% if(context.config.columnsToShow.brand == "on") { %>
+                    <% if(context.settings.brandColumn == true) { %>
                     <th scope="col">Brand</th>
                     <% } %>
 
-                    <% if(context.config.columnsToShow.creationDate == "on") { %>
+                    <% if(context.settings.creationDateColumn == true) { %>
                     <th scope="col">Creation</th>
                     <% } %>
 
-                    <% if(context.config.columnsToShow.date == "on") { %>
+                    <% if(context.settings.timeColumn == true) { %>
                     <th scope="col">Time</th>
                     <% } %>
 
@@ -133,23 +136,23 @@
 
                     <td><a target="_blank" href="https://odo.corp.qualtrics.com/?a=Tickets&b=TicketViewer&tid=<%= ticket.ticketId %>"><%= ticket.name.replace(/\s-\s[\w.-]+@[\w.-]+\.\w+/g, "") %></a></td>
 
-                    <% if(context.config.columnsToShow.specialty == "on") { %>
+                    <% if(context.settings.specialtyColumn == true) { %>
                     <td class="text-end"><%= context.specialties[ticket.specialty] %></td>
                     <% } %>
 
-                    <% if(context.config.columnsToShow.user == "on") { %>
+                    <% if(context.settings.userColumn == true) { %>
                     <td><%= ticket.user %></td>
                     <% } %>
 
-                    <% if(context.config.columnsToShow.brand == "on") { %>
+                    <% if(context.settings.brandColumn == true) { %>
                     <td><%= ticket.brand %></td>
                     <% } %>
 
-                    <% if(context.config.columnsToShow.creationDate == "on") { %>
+                    <% if(context.settings.creationDateColumn == true) { %>
                     <td><%= ticket.creationDate.substring(0,10) %></td>
                     <% } %>
 
-                    <% if(context.config.columnsToShow.date == "on") { %>
+                    <% if(context.settings.timeColumn == true) { %>
                     <td><%= ticket.date.slice(11, 16) %></td>
                     <% } %>
 
@@ -158,10 +161,10 @@
                         <i class="bi bi-three-dots-vertical hand-pointer" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"></i>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                           <li><a class="dropdown-item ticket-start-default" data-ticket-id=<%= ticket.id %> href="#">Default</a></li>
-                          <li><a class="dropdown-item ticket-start-warning" data-ticket-id=<%= ticket.id %> href="#">Warning</a></li>
-                          <li><a class="dropdown-item ticket-start-success" data-ticket-id=<%= ticket.id %> href="#">Success</a></li>
-                          <li><a class="dropdown-item ticket-start-alert" data-ticket-id=<%= ticket.id %>   href="#">Alert</a></li>
-
+                          <li><a class="dropdown-item ticket-start-warning" data-ticket-id=<%= ticket.id %> style="color: #cfbaf0" href="#">Warning</a></li>
+                          <li><a class="dropdown-item ticket-start-success" data-ticket-id=<%= ticket.id %> style="color: #a3c4f3" href="#">Success</a></li>
+                          <li><a class="dropdown-item ticket-start-alert" data-ticket-id=<%= ticket.id %>   style="color: #90dbf4" href="#">Alert</a></li>
+                          <li><a class="dropdown-item ticket-start-alert text-danger" href="/removeTicket/<%= ticket.id %>">Delete</a></li>
                         </ul>
                       </div>
                     </td>
@@ -197,12 +200,12 @@
         <h5 class="modal-title" id="targetsModalLabel">What are your goals for today?</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="/your-post-url" method="post"> <!-- Replace "/your-post-url" with the actual URL for the POST request -->
+      <form action="/setTargets" method="post">
         <div class="modal-body">
           <!-- Add the input fields for core and specialty targets -->
           <div class="mb-3">
-            <label for="coreTarget" class="form-label">Core Target</label>
-            <input type="number" class="form-control" id="coreTarget" name="coreTarget" placeholder="Enter Core Target" required>
+            <label for="coreTarget" class="form-label">Total Target</label>
+            <input type="number" class="form-control" id="coreTarget" name="totalTarget" placeholder="Enter Totalx Target" required>
           </div>
           <div class="mb-3">
             <label for="specialtyTarget" class="form-label">Specialty Target</label>
@@ -239,7 +242,7 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="columnsToShow[date]" <% if(context.config.columnsToShow.date == "on") { %> checked <% } %>>
+                <input class="form-check-input" type="checkbox" name="timeColumn" <% if(context.settings.timeColumn == true) { %> checked <% } %>>
                 <label class="form-check-label" for="checkbox1">
                   Time
                 </label>
@@ -247,7 +250,7 @@
             </div>
             <div class="col-md-6">
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="columnsToShow[specialty]" <% if(context.config.columnsToShow.specialty == "on") { %> checked <% } %>>
+                <input class="form-check-input" type="checkbox" name="specialtyColumn" <% if(context.settings.specialtyColumn == true) { %> checked <% } %>>
                 <label class="form-check-label" for="checkbox2">
                  Specialty
                </label>
@@ -259,7 +262,7 @@
          <div class="row mt-3">
           <div class="col-md-6">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="columnsToShow[user]" <% if(context.config.columnsToShow.user == "on") { %> checked <% } %>>
+              <input class="form-check-input" type="checkbox" name="userColumn" <% if(context.settings.userColumn == true) { %> checked <% } %>>
               <label class="form-check-label" for="checkbox3">
                 User
               </label>
@@ -267,7 +270,7 @@
           </div>
           <div class="col-md-6">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="columnsToShow[brand]" <% if(context.config.columnsToShow.brand == "on") { %> checked <% } %>>
+              <input class="form-check-input" type="checkbox" name="brandColumn" <% if(context.settings.brandColumn == true) { %> checked <% } %>>
               <label class="form-check-label" for="checkbox4">
                 Brand
               </label>
@@ -279,7 +282,7 @@
         <div class="row mt-3">
           <div class="col-md-6">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="columnsToShow[creationDate]" <% if(context.config.columnsToShow.creationDate == "on") { %> checked <% } %>>
+              <input class="form-check-input" type="checkbox" name="creationDateColumn" <% if(context.settings.creationDateColumn == true) { %> checked <% } %>>
               <label class="form-check-label" for="checkbox5">
                Creation Date
              </label>
@@ -484,10 +487,5 @@
     });
   });
 </script>
-
-
-<!-- Script to clean Ticket's name -->
-
-
 </body>
 </html>

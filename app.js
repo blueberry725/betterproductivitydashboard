@@ -19,7 +19,8 @@ const init = require('./routes/init');
 const editSettings = require('./routes/editSettings');
 const updateColor = require('./routes/updateColor');
 const removeTicket = require('./routes/removeTicket');
-const setTarget = require('./routes/setTarget');
+const setTargets = require('./routes/setTargets');
+const welcome = require('./routes/welcome');
 
 app.use('/path', exampleRoute);
 app.use('/add', addTicket);
@@ -29,7 +30,8 @@ app.use('/init', init);
 app.use('/editsettings', editSettings);
 app.use('/updatecolor', updateColor);
 app.use('/removeticket', removeTicket);
-app.use('/setTarget', setTarget);
+app.use('/setTargets', setTargets);
+app.use('/welcome', welcome);
 
 // Start the server
 const PORT = 3000;

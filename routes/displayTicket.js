@@ -64,6 +64,12 @@ router.get('/', async (req, res) => {
     const rowNotEqualCore = await getAsync('SELECT COUNT(*) AS countNotEqualCore FROM tickets WHERE specialty <> ? AND DATE(date) = ? AND isActive = ?', [1, date, 0]);
     const specialtyCount = rowNotEqualCore.countNotEqualCore;
 
+    // get current goals
+    const ticketsTarget = await getAsync('SELECT * FROM targets WHERE DATE(date) = ? ORDER BY id DESC LIMIT 1', [date]);
+
+    // get current settings
+    const settings = await getAsync('SELECT * FROM settings ORDER BY id DESC LIMIT 1');
+
     const context = {
       dataTickets: rows,
       specialties: specialties,
@@ -72,14 +78,15 @@ router.get('/', async (req, res) => {
       specialtyCount: specialtyCount,
       coreTicketsTarget: 7,
       specialtyTicketsTarget: 1,
-      totalticketsTarget: 9
+      ticketsTarget: ticketsTarget,
+      settings: settings
     };
 
     res.render('index', { context: context });
   } catch (err) {
     // Handle errors
     console.error('Error:', err);
-    res.status(500).send('An error occurred.');
+    res.status(500).send('An error occurred:' + err);
   }
 });
 

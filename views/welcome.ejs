@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+    <title>Better Productivity Dashboard</title>
+  
+    <link rel="icon" type="image/x-icon" href="img/otter-solid.svg">
+  
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  
+  
+    <!-- Custom styles for this template -->
+    <link href="css/style.css" rel="stylesheet">
+  </head>
+<body>
+
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Welcome to BiPiDi</h5>
+            <h6 class="card-subtitle mb-2 text-muted">You're going to do well</h6>
+            <p class="card-text">Before setting up everything, could you tell us a bit more about yourself?</p>
+            <form action="/init" method="post"> 
+              <div class="form-group mb-4">
+                <label for="exampleInputEmail1">Name</label>
+                <input class="form-control" placeholder="What's your name?" name="name">
+              </div>
+              <div class="form-group mb-4">
+                <label for="exampleInputEmail1">Email address</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="What's your email?" name="email">
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
