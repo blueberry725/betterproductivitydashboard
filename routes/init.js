@@ -5,13 +5,16 @@
   const bodyParser = require('body-parser');
   const fs = require('fs');
   const axios = require('axios');
+  const config = require('../config');
 
   router.use(bodyParser.urlencoded({ extended: true }));
 
-  router.post('/', (req, res) => {
+  router.post('/', async(req, res) => {
     console.log(req.body)
 
     const { userSettings } = req.body;
+
+    // Create the correct tables in the db
 
     db.run(`
       CREATE TABLE IF NOT EXISTS tickets (
@@ -71,6 +74,8 @@
     });
 
 
+    // create a survey session and update it to save the name of the user in a survey
+
     db.run('INSERT INTO settings (email, name, timeColumn, specialtyColumn, userColumn, brandColumn, creationDateColumn) VALUES (?, ?, ?, ?, ?, ?, ?)', [req.body.email, req.body.name, 0, 1, 0, 1, 0], function(err) {
       if (err) {
         return console.log(err.message);
@@ -79,8 +84,8 @@
     });
 
     // -------- API CALL
-    const apiUrl = 'https://yul1.qualtrics.com/API/v3/surveys/SV_55rqAKHFFKQIBjU/sessions/FS_C202aEdi2aguPXr'; 
-    const apiKey = 'tRRdiC4AfEBSkke2SZlrc4M8Hv2S6x5VOwOh5cpr'; 
+    let apiUrl = 'https://yul1.qualtrics.com/API/v3/surveys/SV_55rqAKHFFKQIBjU/sessions'; 
+    const apiKey = config.apiToken1; 
       
     const headers = {
       'x-api-token': apiKey,
@@ -90,12 +95,18 @@
     const requestBody = {
       "advance": true,
       "responses":{
-        "QID1": "It's a nice color."
+        "QID1": req.body.name,
+        "QID2": req.body.email
       }
     };
       
-    // Make the API call 
-    const response = axios.post(apiUrl, requestBody, { headers });
+    // Make the API call 1
+    const response1 = await axios.post(apiUrl, requestBody, { headers });
+
+    apiUrl = 'https://yul1.qualtrics.com/API/v3/surveys/SV_55rqAKHFFKQIBjU/sessions/' + response1.data.result.sessionId; 
+      
+    // Make the API call 2
+    const response2 = axios.post(apiUrl, requestBody, { headers });
     
     res.redirect('/');
   });

@@ -1,9 +1,0 @@
-{
-  "columnsToShow": {
-    "date": "on",
-    "specialty": "on",
-    "user": "on",
-    "brand": "on",
-    "creationDate": "on"
-  }
-}

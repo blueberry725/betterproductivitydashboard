@@ -4,6 +4,7 @@ const axios = require('axios');
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('db/tickets.sqlite');
 const bodyParser = require('body-parser');
+const config = require('../config');
 
 router.use(bodyParser.urlencoded({ extended: true }));
 
@@ -17,7 +18,7 @@ router.post('/', async (req, res) => {
 
     // -------- API CALL
     const apiUrl = 'https://odo-public-api.corp.qualtrics.com/odo-api/ticket/' + ticketId; 
-    const apiKey = '1aad7571-a43c-4901-b564-0a2850c58240'; 
+    const apiKey = config.apiToken2; 
 
     const headers = {
       'Authorization': `Bearer ${apiKey}`,
