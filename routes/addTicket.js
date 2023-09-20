@@ -46,9 +46,9 @@ router.post('/', async (req, res) => {
       const ticket = {
         ticketId: response.data.TicketID,
         name: response.data.TicketDescription,
-        user: response.data.RSUser[0].UserName,
-        brand: response.data.RSBrand[0].BrandID,
-        specialty: response.data.Specialty[0],
+        user: response.data.RSUser !== undefined ? response.data.RSUser[0].UserName : 'N/A',
+        brand: brand_data = response.data.RSBrand !== undefined ? response.data.RSBrand[0].BrandID : 'N/A',
+        specialty: specialty_data = response.data.Specialty !== undefined ? response.data.Specialty[0] : 'N/A',
         creationDate: response.data.CreationDateTime,
       };
 

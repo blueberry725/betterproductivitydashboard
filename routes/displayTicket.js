@@ -41,7 +41,20 @@ router.get('/', async (req, res) => {
   
   const specialties = {
     '1': 'Core',
-    '8': 'Int'
+    '2': 'WAF',
+    '3': '360',
+    '4': 'XMD',
+    '5': 'EE',
+    '6': 'CXD',
+    '7': 'SiQ',
+    '8': 'Int',
+    '9': 'THM',
+    '10': 'SSO',
+    '11': 'SSOS',
+    '12': 'SF',
+    '13': 'API',
+    '14': 'QClassRoom',
+    '15': 'SDK',
   };
   
   // Select date
