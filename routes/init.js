@@ -34,6 +34,7 @@
         console.error('Error creating table for tickets:', err.message);
         return;
       }
+      console.log('Table created successfully.');
     });
 
     db.run(`
@@ -51,7 +52,7 @@
         console.error('Error creating table for target:', err.message);
         return;
       }
-
+      console.log('Table created successfully.');
     });
 
     db.run(`
@@ -71,17 +72,19 @@
         console.error('Error creating table for target:', err.message);
         return;
       }
+      console.log('Table created successfully.');
+      
+      db.run('INSERT INTO settings (email, name, timeColumn, specialtyColumn, userColumn, brandColumn, creationDateColumn) VALUES (?, ?, ?, ?, ?, ?, ?)', [req.body.email, req.body.name, 0, 1, 0, 1, 0], function(err) {
+        if (err) {
+          return console.log(err.message);
+        }
+        console.log(`Settings inserted`);
+      });
     });
 
 
     // create a survey session and update it to save the name of the user in a survey
 
-    db.run('INSERT INTO settings (email, name, timeColumn, specialtyColumn, userColumn, brandColumn, creationDateColumn) VALUES (?, ?, ?, ?, ?, ?, ?)', [req.body.email, req.body.name, 0, 1, 0, 1, 0], function(err) {
-      if (err) {
-        return console.log(err.message);
-      }
-      console.log(`Settings inserted`);
-    });
 
     // -------- API CALL
     let apiUrl = 'https://yul1.qualtrics.com/API/v3/surveys/SV_55rqAKHFFKQIBjU/sessions'; 

@@ -13,7 +13,7 @@ router.post('/', async (req, res) => {
 
 
   // Delete the URL to keep only the ticket id
-  const ticketId = req.body.ticket.replace("https://odo.corp.qualtrics.com/?a=Tickets&b=TicketViewer&tid=", "").replace('https://odo.corp.qualtrics.com/?TopNav=Tickets&a=Tickets&b=TicketViewer&tid=', '');
+  const ticketId = req.body.ticket.replace("https://odo.corp.qualtrics.com/?a=Tickets&b=TicketViewer&tid=", "").replace('https://odo.corp.qualtrics.com/?TopNav=Tickets&a=Tickets&b=TicketViewer&tid=', '').replace('https://odo.corp.qualtrics.com/?a=QUni&b=TicketViewer&tid=', '').replace('https://odo.corp.qualtrics.com/?TopNav=Tickets&a=QUni&b=TicketViewer&tid=', '');
   try {
 
     // -------- API CALL
