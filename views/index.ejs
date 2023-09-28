@@ -40,9 +40,9 @@
         </div>
         <div class="row">
           <div class="col-md-6 mb-3" style="color: #333">
-            <span class="badge" style="background-color: #ffdeb4; color: #333"><%= context.coreCount + context.specialtyCount %> Tickets</span>
+            <span class="badge" style="background-color: #ffdeb4; color: #333"><%= context.coreCount + context.specialtyCount %> <% if (context.ticketsTarget) { %> / <%= context.ticketsTarget.totalTarget %> <% } %>Tickets</span>
             <span class="badge" style="background-color: #ffb4b4; color: #333"><%= context.coreCount %> Core Tickets</span>
-            <span class="badge" style="background-color: #b2a4ff; color: #333"><%= context.specialtyCount %> Specialty Tickets</span>
+            <span class="badge" style="background-color: #b2a4ff; color: #333"><%= context.specialtyCount %> <% if (context.ticketsTarget) { %> / <%= context.ticketsTarget.specialtyTarget %> <% } %>Specialty Tickets</span>
           </div>
 
 
@@ -80,7 +80,8 @@
                 <% } %>
 
                 <% if (context.specialtyCount > context.ticketsTarget.specialtyTarget) { %>
-                <% context.specialtyCount = context.ticketsTarget.specialtyTarget; %>
+                <% context.specialtyCount = context.specialtyCount + context.specialtyCount - context.ticketsTarget.specialtyTarget %>
+                
                 <% } %>
 
 
@@ -137,7 +138,7 @@
                   <tr class="ticket  ticket-color-<%= ticket.color %>" id="ticket-<%= ticket.id %>">
                     <th scope="row"><%= index + 1 %></th>
 
-                    <td><a target="_blank" href="https://odo.corp.qualtrics.com/?a=Tickets&b=TicketViewer&tid=<%= ticket.ticketId %>"><%= ticket.name.replace(/\s-\s[\w.-]+@[\w.-]+\.\w+/g, "") %></a></td>
+                    <td><% if (ticket.ticketId.includes('SP')) {%><i class="bi bi-telephone mr-5"></i><% } else { %> <i class="bi bi-envelope"></i> <% } %><a style="margin-left: 5px;" target="_blank" href="https://odo.corp.qualtrics.com/?a=Tickets&b=TicketViewer&tid=<%= ticket.ticketId %>"><%= ticket.name.replace(/\s-\s[\w.-]+@[\w.-]+\.\w+/g, "") %></a></td>
 
                     <% if(context.settings.specialtyColumn == true) { %>
                     <td class="text-end"><%= context.specialties[ticket.specialty] %></td>
