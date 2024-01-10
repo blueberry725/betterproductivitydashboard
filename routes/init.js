@@ -65,7 +65,8 @@
         specialtyColumn BINARY,
         userColumn BINARY,
         brandColumn BINARY,
-        creationDateColumn BINARY
+        creationDateColumn BINARY,
+        darkMode BINARY,
       )
       `, (err) => {
       if (err) {
